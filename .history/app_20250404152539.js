@@ -36,45 +36,31 @@ app.use((req, res, next) => {
   next();
 });
 
-function verifyToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  console.log("Authorization Header:", authHeader); // Log header
-
-  if (!authHeader) {
-    console.error("Authorization Header Missing");
-    return res.status(401).send({ message: i18next.t("invalidToken") });
-  }
-
-  const tokenParts = authHeader.split(" ");
-  if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
-    console.error("Invalid Authorization Header Format");
-    return res.status(401).send({ message: i18next.t("invalidToken") });
-  }
-
-  const token = tokenParts[1];
-
-  try {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    console.error("JWT Verification Error:", err);
-    return res.status(401).send({ message: i18next.t("invalidToken") });
-  }
-}
+// Middleware for token verification
 // function verifyToken(req, res, next) {
 //   const token = req.headers["authorization"];
 //   if (!token) return res.status(403).send({ message: i18next.t("noToken") });
 
-//   try {
-//     const decoded = jwt.verify(token.split(" ")[1], process.env.SECRET_KEY); //split to remove bearer
+//   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+//     if (err)
+//       return res.status(401).send({ message: i18next.t("invalidToken") });
 //     req.user = decoded;
 //     next();
-//   } catch (err) {
-//     console.error("JWT Verification Error:", err); //log error
-//     return res.status(401).send({ message: i18next.t("invalidToken") });
-//   }
+//   });
 // }
+function verifyToken(req, res, next) {
+  const token = req.headers["authorization"];
+  if (!token) return res.status(403).send({ message: i18next.t("noToken") });
+
+  try {
+    const decoded = jwt.verify(token.split(" ")[1], process.env.SECRET_KEY); //split to remove bearer
+    req.user = decoded;
+    next();
+  } catch (err) {
+    console.error("JWT Verification Error:", err); //log error
+    return res.status(401).send({ message: i18next.t("invalidToken") });
+  }
+}
 app.use("/users", usersRouter);
 app.use("/events", verifyToken, eventsRouter); // Protect event routes
 app.use("/ratings", verifyToken, ratingsRouter); // Protect rating routes
@@ -106,4 +92,3 @@ async function sendEventNotifications() {
 
 // Example: Send notifications every minute (for testing).
 setInterval(sendEventNotifications, 60000);
-module.exports = { app, server };

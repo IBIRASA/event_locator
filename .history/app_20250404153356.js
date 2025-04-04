@@ -36,6 +36,19 @@ app.use((req, res, next) => {
   next();
 });
 
+// Middleware for token verification
+// function verifyToken(req, res, next) {
+//   const token = req.headers["authorization"];
+//   if (!token) return res.status(403).send({ message: i18next.t("noToken") });
+
+//   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+//     if (err)
+//       return res.status(401).send({ message: i18next.t("invalidToken") });
+//     req.user = decoded;
+//     next();
+//   });
+// }
+
 function verifyToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   console.log("Authorization Header:", authHeader); // Log header
