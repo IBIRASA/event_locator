@@ -1,3 +1,4 @@
+
 // module.exports = i18next;
 const i18next = require("i18next");
 const Backend = require("i18next-fs-backend");
