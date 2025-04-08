@@ -28,6 +28,7 @@ app.use((req, res, next) => {
 
   console.log("i18next language:", i18next.language);
 
+  // Explicitly set req.i18n
   req.i18n = i18next;
 
   console.log("req.i18n", req.i18n);
@@ -37,7 +38,7 @@ app.use((req, res, next) => {
 
 function verifyToken(req, res, next) {
   const authHeader = req.headers["authorization"];
-  console.log("Authorization Header:", authHeader);
+  console.log("Authorization Header:", authHeader); // Log header
 
   if (!authHeader) {
     console.error("Authorization Header Missing");
@@ -62,9 +63,9 @@ function verifyToken(req, res, next) {
   }
 }
 app.use("/users", usersRouter);
-app.use("/events", verifyToken, eventsRouter);
-app.use("/ratings", verifyToken, ratingsRouter);
-app.use("/favorites", verifyToken, favoritesRouter);
+app.use("/events", verifyToken, eventsRouter); // Protect event routes
+app.use("/ratings", verifyToken, ratingsRouter); // Protect rating routes
+app.use("/favorites", verifyToken, favoritesRouter); // Protect favorite routes
 
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
@@ -76,7 +77,7 @@ app.listen(PORT, () => {
 async function sendEventNotifications() {
   try {
     const now = new Date();
-    const upcomingEvents = await getEvents();
+    const upcomingEvents = await getEvents(); // Add date filter to get upcoming events.
     for (const event of upcomingEvents) {
       const message = i18next.t("upcomingEvent", {
         lng: "en",
@@ -90,5 +91,6 @@ async function sendEventNotifications() {
   }
 }
 
+// Example: Send notifications every minute (for testing).
 setInterval(sendEventNotifications, 60000);
 module.exports = { app, server };

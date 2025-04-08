@@ -1,7 +1,9 @@
 const redis = require("redis");
 
+// 1. Create a Redis Client:
 const client = redis.createClient();
 
+// 2. Subscribe to the 'event-notifications' channel:
 client.subscribe("event-notifications", (err, count) => {
   if (err) {
     console.error("Subscription error:", err);
@@ -12,14 +14,17 @@ client.subscribe("event-notifications", (err, count) => {
   }
 });
 
+// 3. Listen for messages on the channel:
 client.on("message", (channel, message) => {
   console.log(`Received message on channel ${channel}: ${message}`);
 });
 
+// 4. Handle Redis client errors:
 client.on("error", (err) => {
   console.error("Redis client error:", err);
 });
 
+//Optional: handle redis connection close.
 client.on("end", () => {
   console.log("Redis client disconnected.");
 });

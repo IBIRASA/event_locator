@@ -1,5 +1,5 @@
 const request = require("supertest");
-const { app, server } = require("../app");
+const { app, server } = require("../app"); // Import app and server
 const pool = require("../utils/database");
 const { generateToken } = require("../models/user");
 
@@ -18,7 +18,7 @@ describe("Favorite Routes", () => {
       [testUser.id]
     );
     testEvent = testEvent.rows[0];
-    token = "Bearer " + generateToken(testUser); 
+    token = generateToken(testUser);
   });
 
   afterAll(async () => {
@@ -28,13 +28,13 @@ describe("Favorite Routes", () => {
     await pool.query("DELETE FROM events WHERE id = $1", [testEvent.id]);
     await pool.query("DELETE FROM users WHERE id = $1", [testUser.id]);
     await pool.end();
-    server.close();
+    server.close(); // Close the server
   });
 
   it("should add a favorite event", async () => {
-    const response = await request(server)
+    const response = await request(server) //
       .post("/favorites")
-      .set("Authorization", token) 
+      .set("Authorization", token)
       .send({
         eventId: testEvent.id,
         userId: testUser.id,
@@ -43,7 +43,7 @@ describe("Favorite Routes", () => {
   });
 
   it("should get favorite events by user ID", async () => {
-    const response = await request(server)
+    const response = await request(server) // Use server
       .get(`/favorites/${testUser.id}`)
       .set("Authorization", token);
     expect(response.statusCode).toBe(200);
@@ -51,7 +51,7 @@ describe("Favorite Routes", () => {
   });
 
   it("should remove a favorite event", async () => {
-    const response = await request(server)
+    const response = await request(server) // Use server
       .delete("/favorites")
       .set("Authorization", token)
       .send({

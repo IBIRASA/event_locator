@@ -34,7 +34,7 @@ describe("Favorite Routes", () => {
   it("should add a favorite event", async () => {
     const response = await request(server)
       .post("/favorites")
-      .set("Authorization", token) 
+      .set("Authorization", token) // Ensure the token is passed correctly
       .send({
         eventId: testEvent.id,
         userId: testUser.id,

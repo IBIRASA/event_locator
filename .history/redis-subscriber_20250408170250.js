@@ -20,6 +20,7 @@ client.on("error", (err) => {
   console.error("Redis client error:", err);
 });
 
+//Optional: handle redis connection close.
 client.on("end", () => {
   console.log("Redis client disconnected.");
 });
